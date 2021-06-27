@@ -1,0 +1,73 @@
+Sub StockMarket():
+    
+    Dim ws As Worksheet
+    Dim summaryTable As Long
+    
+    Dim openPrice As Double
+    Dim closePrice As Double
+    Dim yearlychange As Double
+    Dim percentchange As Double
+    Dim totalstock As Double
+
+    For Each ws In ActiveWorkbook.Worksheets
+    
+    
+    'set headers
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+   lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    summaryTable = 1
+    
+    
+    Column = 1
+    
+    'Loop
+    Dim i As Long
+    
+    
+    For i = 2 To lastrow
+     totalstock = totalstock + ws.Cells(i, 7).Value
+    
+    
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+        'ticker
+        ticker = ws.Cells(i, Column).Value
+        summaryTable = summaryTable + 1
+        ws.Range("I" & summaryTable).Value = ticker
+        'yearly change
+        openPrice = ws.Cells(2, 3).Value
+        closePrice = ws.Cells(i, 6).Value
+        yearlychange = closePrice - openPrice
+       
+        ws.Range("J" & summaryTable).Value = yearlychange
+            If yearlychange > 0 Then
+            ws.Cells(summaryTable, 10).Interior.ColorIndex = 4
+            Else
+            ws.Cells(summaryTable, 10).Interior.ColorIndex = 3
+            End If
+        'Percent change
+        percentchange = ((closePrice - openPrice) / openPrice) * 100
+        ws.Range("K" & summaryTable).Value = Round(percentchange, 2)
+         
+        'stock volume
+        
+        ws.Range("L" & summaryTable).Value = totalstock
+      totalstock = 0
+    End If
+ 
+    
+    Next i
+    
+    Range("I1:L1").EntireColumn.AutoFit
+    Next ws
+    
+    
+    
+    End Sub
+    
+    
+    
